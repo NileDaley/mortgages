@@ -6,130 +6,77 @@
 <div class="columns">
   <div class="column is-4 is-offset-1">
     <h2 class="subtitle has-text-centered">Your Details</h2>
-    <form id="mortgageForm" #mortgageForm="ngForm">
-
-      Valid form? :{{mortgageForm.valid}}
+    <form [formGroup]="mortgageForm" novalidate>
+      <p>Form value: {{ mortgageForm.value | json }}</p>
+      <p>Form status: {{ mortgageForm.status | json }}</p>
 
       <div class="field">
         <label class="label">Surname</label>
         <div class="control">
-          <input [(ngModel)]="user.surname" name="surname" type="text" class="input" placeholder="Smith" #surname="ngModel" (keyup)="validateSurname(surname.value)" required>
-        </div>
-        <div *ngIf="(surname.touched || surname.dirty) && !validSurname" class="help is-danger">
-          <p>The surname you entered is not valid</p>
+          <input formControlName="surname" type="text" class="input">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Email</label>
         <div class="control">
-          <input [(ngModel)]="user.email" type="email" name="email" class="input" placeholder="tsmith@example.com" #email="ngModel" email required>
-        </div>
-        <div *ngIf="(email.touched || email.dirty) && email.invalid" class="help is-danger">
-          <p>The email you entered is not valid</p>
+          <input formControlName="email" type="text" class="input">
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Phone Number</label>
+        <label class="label">Phone</label>
         <div class="control">
-          <input [(ngModel)]="user.phone" type="tel" name="phone" class="input" placeholder="0161 247 2000" #phone="ngModel" (keyup)="validatePhone(phone.value)" required minlength=11>
-        </div>
-        <div *ngIf="(phone.touched || phone.dirty) && !validPhone" class="help is-danger">
-          <p>The phone number you entered is not valid</p>
+          <input formControlName="phone" type="text" class="input">
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Annual Salary</label>
-        <p class="control has-icons-left">
-          <input [(ngModel)]="user.salary" class="input" name="salary" type="text" placeholder="25000" #salary="ngModel" (keyup)="validateSalary(salary.value)" (keyup.enter)="validateSalary(salary.value)" (keyup.backspace)="validateSalary(salary.value)" required>
-          <span class="icon is-small is-left">
-            <i class="fa fa-gbp"></i>
-          </span>
-        </p>
-        <div *ngIf="(salary.touched || salary.dirty) && !validSalary" class="help is-danger">
-          <p>The salary you entered is not a valid amount</p>
+        <label class="label">Salary</label>
+        <div class="control">
+          <input formControlName="salary" type="text" class="input">
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Deposit Amount</label>
-        <p class="control has-icons-left">
-          <input [(ngModel)]="loan.deposit" class="input" name="deposit" type="text" placeholder="5000" #deposit="ngModel" (keyup)="validateDeposit(deposit.value)" required>
-          <span class="icon is-small is-left">
-            <i class="fa fa-gbp"></i>
-          </span>
-        </p>
-        <div *ngIf="(deposit.touched || deposit.dirty) && !validDeposit" class="help is-danger">
-          <p>The deposit you entered is not a valid amount</p>
+        <label class="label">Deposit</label>
+        <div class="control">
+          <input formControlName="deposit" type="text" class="input">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Term</label>
+        <div class="control">
+          <div class="select">
+            <select formControlName="term">
+              <option *ngFor="let term of terms" [value]="term">{{term}}</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="field">
         <label class="label">Loan Amount</label>
-        <p class="control has-icons-left">
-          <input [(ngModel)]="loan.amount" class="input" name="loanAmount" type="text" placeholder="45000" #loanAmount="ngModel" (keyup)="validateLoanAmount(loanAmount.value)" required>
-          <span class="icon is-small is-left">
-            <i class="fa fa-gbp"></i>
-          </span>
-        </p>
-        <div *ngIf="(loanAmount.touched || loanAmount.dirty) && !validLoanAmount" class="help is-danger">
-          <p>The loan amount you entered is not a valid amount</p>
+        <div class="control">
+          <input formControlName="loanAmount" type="text" class="input">
         </div>
       </div>
 
-      <div class="columns">
-
-        <div class="column">
-          <div class="field">
-            <label class="label">Loan Term (Years)</label>
-            <div class="control">
-              <span class="select">
-                <select [(ngModel)]="loan.term" name="term" class="select" (change)="filterOptions()" >
-                  <option *ngFor="let term of termOptions" [value]="term">{{term}}</option>
-                </select>
-              </span>
-            </div>
-          </div>
+      <div class="field">
+        <label class="label">Has Account</label>
+        <div class="control">
+          <label class="radio">
+            <input type="radio" formControlName="hasAccount" value="false">
+            Yes
+          </label>
+          <label class="radio">
+            <input type="radio" formControlName="hasAccount" value="true">
+            No
+          </label>
         </div>
-
-        <div class="column">
-          <div class="field">
-            <label class="label">Do you have an account with us?</label>
-            <div class="control">
-              <span class="select">
-                <select [(ngModel)]="user.hasAccount" name="term" class="select" (change)="filterOptions()" >
-                  <option [value]="false" >No</option>
-                  <option [value]="true">Yes</option>
-                </select>
-              </span>
-            </div>
-          </div>
-        </div>
-
       </div>
 
     </form>
-  </div>
-  <div class="column is-4 is-offset-2">
-    <h2 class="subtitle has-text-centered">Mortgage Options</h2>
-    <div *ngIf="availableOptions?.length > 0 && mortgageForm.valid">
-      <div *ngFor="let opt of availableOptions" id="mortgageOptions">
-        <div class="card">
-          <div class="card-header">
-            <p class="card-header-title">
-              {{opt.name}}
-            </p>
-          </div>
-          <div class="card-content">
-            <label class="label">Total Amount Repayable</label> {{totalPayable(opt.interestRate) | currency:'GBP':true:'4.2-2'}} = {{loan.amount | currency:'GBP':true:'4.2-2'}} * {{1 + opt.interestRate}}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="!availableOptions || availableOptions?.length === 0">
-      <p class="has-text-centered has-text-danger">There don't seem to be any mortgages available suitable to the details you provided</p>
-    </div>
   </div>
 </div>

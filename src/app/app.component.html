@@ -1,20 +1,135 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-  <img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="columns">
+  <div class="column is-6 is-offset-3">
+    <h1 class="title has-text-centered">Mortgage Calculator</h1>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="columns">
+  <div class="column is-4 is-offset-1">
+    <h2 class="subtitle has-text-centered">Your Details</h2>
+    <form id="mortgageForm" #mortgageForm="ngForm">
 
+      Valid form? :{{mortgageForm.valid}}
+
+      <div class="field">
+        <label class="label">Surname</label>
+        <div class="control">
+          <input [(ngModel)]="user.surname" name="surname" type="text" class="input" placeholder="Smith" #surname="ngModel" (keyup)="validateSurname(surname.value)" required>
+        </div>
+        <div *ngIf="(surname.touched || surname.dirty) && !validSurname" class="help is-danger">
+          <p>The surname you entered is not valid</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Email</label>
+        <div class="control">
+          <input [(ngModel)]="user.email" type="email" name="email" class="input" placeholder="tsmith@example.com" #email="ngModel" email required>
+        </div>
+        <div *ngIf="(email.touched || email.dirty) && email.invalid" class="help is-danger">
+          <p>The email you entered is not valid</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Phone Number</label>
+        <div class="control">
+          <input [(ngModel)]="user.phone" type="tel" name="phone" class="input" placeholder="0161 247 2000" #phone="ngModel" (keyup)="validatePhone(phone.value)" required minlength=11>
+        </div>
+        <div *ngIf="(phone.touched || phone.dirty) && !validPhone" class="help is-danger">
+          <p>The phone number you entered is not valid</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Annual Salary</label>
+        <p class="control has-icons-left">
+          <input [(ngModel)]="user.salary" class="input" name="salary" type="text" placeholder="25000" #salary="ngModel" (keyup)="validateSalary(salary.value)" (keyup.enter)="validateSalary(salary.value)" (keyup.backspace)="validateSalary(salary.value)" required>
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
+        </p>
+        <div *ngIf="(salary.touched || salary.dirty) && !validSalary" class="help is-danger">
+          <p>The salary you entered is not a valid amount</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Deposit Amount</label>
+        <p class="control has-icons-left">
+          <input [(ngModel)]="loan.deposit" class="input" name="deposit" type="text" placeholder="5000" #deposit="ngModel" (keyup)="validateDeposit(deposit.value)" required>
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
+        </p>
+        <div *ngIf="(deposit.touched || deposit.dirty) && !validDeposit" class="help is-danger">
+          <p>The deposit you entered is not a valid amount</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Loan Amount</label>
+        <p class="control has-icons-left">
+          <input [(ngModel)]="loan.amount" class="input" name="loanAmount" type="text" placeholder="45000" #loanAmount="ngModel" (keyup)="validateLoanAmount(loanAmount.value)" required>
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
+        </p>
+        <div *ngIf="(loanAmount.touched || loanAmount.dirty) && !validLoanAmount" class="help is-danger">
+          <p>The loan amount you entered is not a valid amount</p>
+        </div>
+      </div>
+
+      <div class="columns">
+
+        <div class="column">
+          <div class="field">
+            <label class="label">Loan Term (Years)</label>
+            <div class="control">
+              <span class="select">
+                <select [(ngModel)]="loan.term" name="term" class="select" (change)="filterOptions()" >
+                  <option *ngFor="let term of termOptions" [value]="term">{{term}}</option>
+                </select>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="field">
+            <label class="label">Do you have an account with us?</label>
+            <div class="control">
+              <span class="select">
+                <select [(ngModel)]="user.hasAccount" name="term" class="select" (change)="filterOptions()" >
+                  <option [value]="false" >No</option>
+                  <option [value]="true">Yes</option>
+                </select>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+  <div class="column is-4 is-offset-2">
+    <h2 class="subtitle has-text-centered">Mortgage Options</h2>
+    <div *ngIf="availableOptions?.length > 0 && mortgageForm.valid">
+      <div *ngFor="let opt of availableOptions" id="mortgageOptions">
+        <div class="card">
+          <div class="card-header">
+            <p class="card-header-title">
+              {{opt.name}}
+            </p>
+          </div>
+          <div class="card-content">
+            <label class="label">Total Amount Repayable</label> {{totalPayable(opt.interestRate) | currency:'GBP':true:'4.2-2'}} = {{loan.amount | currency:'GBP':true:'4.2-2'}} * {{1 + opt.interestRate}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!availableOptions || availableOptions?.length === 0">
+      <p class="has-text-centered has-text-danger">There don't seem to be any mortgages available suitable to the details you provided</p>
+    </div>
+  </div>
+</div>

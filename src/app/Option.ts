@@ -7,6 +7,8 @@ export class Option {
   maxAmount: number;
   depositRequired = 0;
   accountNeeded: Boolean = false;
+  totalPayable: any;
+  monthlyRepayment: any;
 
   constructor(name: String, interest, terms: Array<Number>, maximum, deposit, account: Boolean) {
     this.name = name;

@@ -6,42 +6,60 @@
 <div class="columns">
   <div class="column is-4 is-offset-1">
     <h2 class="subtitle has-text-centered">Your Details</h2>
-    <form [formGroup]="mortgageForm" novalidate>
-      <p>Form value: {{ mortgageForm.value | json }}</p>
-      <p>Form status: {{ mortgageForm.status | json }}</p>
+    <form [formGroup]="mortgageForm" novalidate (keyup)="checkControls($event)">
+
+      <!-- These buttons are for testing purposes only -->
+      <button class="button" (click)="fillForm()">Fill Form</button>
+      <button class="button" (click)="resetForm()">Clear Form</button>
+      <!-- These buttons are for testing purposes only -->
 
       <div class="field">
         <label class="label">Surname</label>
         <div class="control">
-          <input formControlName="surname" type="text" class="input">
+          <input [(ngModel)]="user.surname" formControlName="surname" type="text" class="input" [ngClass]="{
+            'is-success': validControl('surname') === true,
+            'is-danger': validControl('surname') === false
+          }">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Email</label>
         <div class="control">
-          <input formControlName="email" type="text" class="input">
+          <input [(ngModel)]="user.email" formControlName="email" type="text" class="input" [ngClass]="{
+            'is-success': validControl('email') === true,
+            'is-danger': validControl('email') === false
+          }">
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Phone</label>
+        <label class="label">Phone number</label>
         <div class="control">
-          <input formControlName="phone" type="text" class="input">
+          <input [(ngModel)]="user.phone" formControlName="phone" [ngClass]="{
+            'is-success': validControl('phone') === true,
+            'is-danger': validControl('phone') === false
+          }" type="text" class="input">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Salary</label>
         <div class="control">
-          <input formControlName="salary" type="text" class="input">
+          <input [(ngModel)]="user.salary" formControlName="salary" type="text" class="input" [ngClass]="{
+            'is-success': validControl('salary') === true,
+            'is-danger': validControl('salary') === false
+          }">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Deposit</label>
         <div class="control">
-          <input formControlName="deposit" type="text" class="input">
+          <input [(ngModel)]="loan.deposit" formControlName="deposit" type="text" class="input" [ngClass]="{
+            'is-success': validControl('deposit') === true,
+            'is-danger': validControl('deposit') === false
+          }">
         </div>
       </div>
 
@@ -49,7 +67,7 @@
         <label class="label">Term</label>
         <div class="control">
           <div class="select">
-            <select formControlName="term">
+            <select [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
               <option *ngFor="let term of terms" [value]="term">{{term}}</option>
             </select>
           </div>
@@ -59,24 +77,54 @@
       <div class="field">
         <label class="label">Loan Amount</label>
         <div class="control">
-          <input formControlName="loanAmount" type="text" class="input">
+          <input [(ngModel)]="loan.amount" formControlName="loanAmount" type="text" class="input" [ngClass]="{
+            'is-success': validControl('loanAmount') === true,
+            'is-danger': validControl('loanAmount') === false
+          }">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Has Account</label>
         <div class="control">
-          <label class="radio">
-            <input type="radio" formControlName="hasAccount" value="false">
-            Yes
-          </label>
-          <label class="radio">
-            <input type="radio" formControlName="hasAccount" value="true">
-            No
-          </label>
+          <div class="select">
+            <select [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">
+              <option value="false" selected>No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
         </div>
       </div>
 
     </form>
+  </div>
+  <div class="column is-7">
+    <div *ngIf="!completedForm()">
+      <h2 class="subtitle">
+        Some of the details you provided are incorrect
+      </h2>
+    </div>
+    <div *ngIf="completedForm()">
+      <h2 class="subtitle">
+        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+          <thead>
+            <th class="small" *ngFor="let heading of tableHeadings">{{heading}}</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let opt of availableOptions; let i = index">
+              <td>{{opt.name}}</td>
+              <td>{{opt.interestRate | percent}}</td>
+              <td>{{loan.term}} years</td>
+              <td>{{loan.amount | currency:'GBP':true:'4.0-0'}}</td>
+              <td>{{opt.totalPayable}}</td>
+              <td>{{opt.monthlyRepayment}}</td>
+              <td>
+                <p class="has-text-info" *ngIf="i === 0">Best Option!</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </h2>
+    </div>
   </div>
 </div>

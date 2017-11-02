@@ -21,25 +21,49 @@ export class AppComponent {
 
   createForm() {
     this.mortgageForm = this.fb.group({
-      surname: ['', Validators.required ],
-      email: ['', Validators.required ],
-      phone: ['', Validators.required ],
-      salary: ['', Validators.required ],
-      deposit: ['', Validators.required ],
-      term: ['', Validators.required ],
-      loanAmount: ['', Validators.required ],
-      hasAccount: ['', Validators.required ]
+      surname: [
+        '',
+        [Validators.required, Validators.minLength(2)]
+      ],
+      email: [
+        '',
+        [Validators.required, Validators.email]
+      ],
+      phone: [
+        '',
+        [Validators.required, Validators.minLength(2), Validators.pattern(/^[0-9]+$/g)]
+      ],
+      salary: [
+        '',
+        [Validators.required, Validators.min(0)]
+      ],
+      deposit: [
+        '',
+        [Validators.required, Validators.min(0)]
+      ],
+      term: [
+        '',
+        Validators.required
+      ],
+      loanAmount: [
+        '',
+        [Validators.required, Validators.min(0)]
+      ],
+      hasAccount: [
+        '',
+        Validators.required
+      ]
     });
   }
 
-/*  validateSurname(val: any) {
-    val = this.strip(val);
-    this.user.surname = val;
+  /*  validateSurname(val: any) {
+      val = this.strip(val);
+      this.user.surname = val;
 
-    const surnameRegex = new RegExp(/^[A-z]+$/g);
-    this.validSurname = (val.length >= 3) && surnameRegex.test(val) === true;
-  }
-*/
+      const surnameRegex = new RegExp(/^[A-z]+$/g);
+      this.validSurname = (val.length >= 3) && surnameRegex.test(val) === true;
+    }
+  */
 
   /*
   validatePhone(val: any) {
@@ -89,7 +113,7 @@ export class AppComponent {
 
   // Make sure the amount is a positive number
   private isValidAmount(val: any) {
-    return isNaN(val) === false && val >= 0 ;
+    return isNaN(val) === false && val >= 0;
   }
 
 }

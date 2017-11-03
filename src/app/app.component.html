@@ -15,11 +15,14 @@
 
       <div class="field">
         <label class="label">Surname</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.surname" formControlName="surname" type="text" class="input" [ngClass]="{
             'is-success': validControl('surname') === true,
             'is-danger': validControl('surname') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-user"></i>
+          </span>
         </div>
         <div *ngIf="validControl('surname') === false">
           <p *ngIf="mortgageForm.get('surname').errors.minlength" class="help is-danger">
@@ -35,12 +38,15 @@
       </div>
 
       <div class="field">
-        <label class="label">Email</label>
-        <div class="control">
+        <label class="label">Email Address</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.email" formControlName="email" type="text" class="input" [ngClass]="{
             'is-success': validControl('email') === true,
             'is-danger': validControl('email') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-envelope"></i>
+          </span>
         </div>
         <div *ngIf="validControl('email') === false">
           <p *ngIf="mortgageForm.get('email').errors.email || mortgageForm.get('email').errors.required" class="help is-danger">
@@ -51,11 +57,14 @@
 
       <div class="field">
         <label class="label">Phone number</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.phone" formControlName="phone" [ngClass]="{
             'is-success': validControl('phone') === true,
             'is-danger': validControl('phone') === false
           }" type="text" class="input">
+          <span class="icon is-small is-left">
+            <i class="fa fa-phone"></i>
+          </span>
         </div>
         <div *ngIf="validControl('phone') === false">
           <p *ngIf="mortgageForm.get('email').errors.required || mortgageForm.get('email').errors.pattern" class="help is-danger">
@@ -65,12 +74,15 @@
       </div>
 
       <div class="field">
-        <label class="label">Salary</label>
-        <div class="control">
+        <label class="label">Annual Salary</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.salary" formControlName="salary" type="text" class="input" [ngClass]="{
             'is-success': validControl('salary') === true,
             'is-danger': validControl('salary') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
         <div *ngIf="validControl('salary') === false">
           <p *ngIf="mortgageForm.get('salary').errors.required || mortgageForm.get('salary').errors.pattern || mortgageForm.get('salary').errors.min || mortgageForm.get('salary').errors.minlength" class="help is-danger">
@@ -80,12 +92,15 @@
       </div>
 
       <div class="field">
-        <label class="label">Deposit</label>
-        <div class="control">
+        <label class="label">Deposit Amount</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="loan.deposit" formControlName="deposit" type="text" class="input" [ngClass]="{
             'is-success': validControl('deposit') === true,
             'is-danger': validControl('deposit') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
         <div *ngIf="validControl('deposit') === false">
           <p *ngIf="mortgageForm.get('deposit').errors.required || mortgageForm.get('deposit').errors.pattern || mortgageForm.get('deposit').errors.min || mortgageForm.get('deposit').errors.minlength" class="help is-danger">
@@ -95,7 +110,7 @@
       </div>
 
       <div class="field">
-        <label class="label">Term</label>
+        <label class="label">Loan Term (Years)</label>
         <div class="control">
           <div class="select">
             <select [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
@@ -107,11 +122,14 @@
 
       <div class="field">
         <label class="label">Loan Amount</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="loan.amount" formControlName="loanAmount" type="text" class="input" [ngClass]="{
             'is-success': validControl('loanAmount') === true,
             'is-danger': validControl('loanAmount') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
         <div *ngIf="validControl('loanAmount') === false">
           <p *ngIf="mortgageForm.get('loanAmount').errors.required || mortgageForm.get('loanAmount').errors.pattern || mortgageForm.get('loanAmount').errors.min || mortgageForm.get('loanAmount').errors.minlength" class="help is-danger">
@@ -121,7 +139,7 @@
       </div>
 
       <div class="field">
-        <label class="label">Has Account</label>
+        <label class="label">Do you have an account?</label>
         <div class="control">
           <div class="select">
             <select [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">

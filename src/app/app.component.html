@@ -15,56 +15,71 @@
 
       <div class="field">
         <label class="label">Surname</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.surname" formControlName="surname" type="text" class="input" [ngClass]="{
             'is-success': validControl('surname') === true,
             'is-danger': validControl('surname') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-user"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Email</label>
-        <div class="control">
+        <label class="label">Email Address</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.email" formControlName="email" type="text" class="input" [ngClass]="{
             'is-success': validControl('email') === true,
             'is-danger': validControl('email') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-envelope"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
         <label class="label">Phone number</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.phone" formControlName="phone" [ngClass]="{
             'is-success': validControl('phone') === true,
             'is-danger': validControl('phone') === false
           }" type="text" class="input">
+          <span class="icon is-small is-left">
+            <i class="fa fa-phone"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Salary</label>
-        <div class="control">
+        <label class="label">Annual Salary</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="user.salary" formControlName="salary" type="text" class="input" [ngClass]="{
             'is-success': validControl('salary') === true,
             'is-danger': validControl('salary') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Deposit</label>
-        <div class="control">
+        <label class="label">Deposit Amount</label>
+        <div class="control has-icons-left">
           <input [(ngModel)]="loan.deposit" formControlName="deposit" type="text" class="input" [ngClass]="{
             'is-success': validControl('deposit') === true,
             'is-danger': validControl('deposit') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Term</label>
+        <label class="label">Loan Term (Years)</label>
         <div class="control">
           <div class="select">
             <select [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
@@ -76,16 +91,19 @@
 
       <div class="field">
         <label class="label">Loan Amount</label>
-        <div class="control">
+        <div class="control has-icons-left">
           <input [(ngModel)]="loan.amount" formControlName="loanAmount" type="text" class="input" [ngClass]="{
             'is-success': validControl('loanAmount') === true,
             'is-danger': validControl('loanAmount') === false
           }">
+          <span class="icon is-small is-left">
+            <i class="fa fa-gbp"></i>
+          </span>
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Has Account</label>
+        <label class="label">Do you have an account?</label>
         <div class="control">
           <div class="select">
             <select [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">

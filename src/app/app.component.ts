@@ -4,6 +4,8 @@ import { CurrencyPipe } from '@angular/common';
 import { Option } from './Option';
 import { User } from './User';
 import { Loan } from './Loan';
+import { Http } from '@angular/http';
+import 'rxjs/add/operator/map';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,7 @@ import { Loan } from './Loan';
 export class AppComponent {
 
   mortgageForm: FormGroup;
+  interestRate: any = 0.03;
 
   user: User;
   loan: Loan;
@@ -23,24 +26,59 @@ export class AppComponent {
   terms: Array<number> = [10, 20, 30];
   tableHeadings: Array<string> = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
 
-  constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe) {
-    this.user = new User;
-    this.loan = new Loan;
-    this.options = this.createOptions();
-    this.createForm();
+  constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: Http) {
+
+    http.get(this.interestRateURL())
+      .map(res => res.json())
+      .subscribe((res) => {
+        this.interestRate = res.dataset.data[0][1] / 100;
+        this.options = this.createOptions();
+      }, (err) => {
+        alert('Unfortunately, we were unable to get the current interest rate. The interest rate will be set to the previous value of 3');
+        this.options = this.createOptions();
+      });
+
+      this.user = new User;
+      this.loan = new Loan;
+      this.createForm();
+  }
+
+  interestRateURL() {
+    const date = new Date();
+    const base_url = 'https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?';
+    const API_KEY = 'W4nq5nDFEKpkwzvRBEuk';
+
+    const to = {
+      day: date.getDate(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear()
+    };
+
+    date.setDate( date.getDate() - 1 );
+
+    const from = {
+      day: date.getDate(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear()
+    };
+
+    return `${base_url}start_date=${from.year}-${from.month}-${from.day}&end_date=${to.year}-${to.month}-${to.day}&api_key=${API_KEY}
+    `;
   }
 
   createForm() {
     // Either +447000700200 or 07000700200
     const phoneRE = '(^[+]([0-9]{2})[0-9]{10}$)|(^[0-9]{11}$)';
     const numericRE = '^[0-9]+$';
+    const alphaRE = '[A-z]+';
 
     this.mortgageForm = this.fb.group({
       surname: [
         '',
         [
           Validators.required,
-          Validators.minLength(2)
+          Validators.minLength(2),
+          Validators.pattern(alphaRE)
         ]
       ],
       email: [
@@ -61,7 +99,7 @@ export class AppComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(1),
+          Validators.minLength(3),
           Validators.min(0),
           Validators.pattern(numericRE)
         ]
@@ -83,6 +121,7 @@ export class AppComponent {
         '',
         [
           Validators.required,
+          Validators.minLength(3),
           Validators.min(0),
           Validators.pattern(numericRE)
         ]
@@ -96,11 +135,11 @@ export class AppComponent {
 
   createOptions() {
     return [
-      new Option('A', 0.008, [10, 20], 4 * this.user.salary, 0, false),
-      new Option('B', 0.007, [10, 20], 4.1 * this.user.salary, 0, true),
-      new Option('C', 0.006, [20], 5 * (this.user.salary + this.loan.deposit), 10000, false),
-      new Option('D', 0.004, [10, 30], 6 * (this.user.salary + this.loan.deposit), 20000, false),
-      new Option('E', 0.002, [10, 20], 7 * (this.user.salary + this.loan.deposit), 40000, true)
+      new Option('A', this.interestRate, 0.008, [10, 20], 4 * this.user.salary, 0, false),
+      new Option('B', this.interestRate, 0.007, [10, 20], 4.1 * this.user.salary, 0, true),
+      new Option('C', this.interestRate, 0.006, [20], 5 * (this.user.salary + this.loan.deposit), 10000, false),
+      new Option('D', this.interestRate, 0.004, [10, 30], 6 * (this.user.salary + this.loan.deposit), 20000, false),
+      new Option('E', this.interestRate, 0.002, [10, 20], 7 * (this.user.salary + this.loan.deposit), 40000, true)
     ];
   }
 

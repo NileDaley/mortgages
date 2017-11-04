@@ -27,43 +27,27 @@ export class AppComponent {
   tableHeadings: Array<string> = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
 
   constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: Http) {
-
+    console.log(this.interestRateURL());
     http.get(this.interestRateURL())
       .map(res => res.json())
       .subscribe((res) => {
-        this.interestRate = res.dataset.data[0][1] / 100;
-        this.options = this.createOptions();
-      }, (err) => {
-        alert('Unfortunately, we were unable to get the current interest rate. The interest rate will be set to the previous value of 3');
-        this.options = this.createOptions();
+        if (res.dataset.data.length === 0) {
+          alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
+          this.options = this.createOptions();
+        } else {
+          this.interestRate = res.dataset.data[0][1] / 100;
+          this.options = this.createOptions();
+        }
       });
 
-      this.user = new User;
-      this.loan = new Loan;
-      this.createForm();
+    this.user = new User;
+    this.loan = new Loan;
+    this.createForm();
   }
 
   interestRateURL() {
-    const date = new Date();
-    const base_url = 'https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?';
     const API_KEY = 'W4nq5nDFEKpkwzvRBEuk';
-
-    const to = {
-      day: date.getDate(),
-      month: date.getMonth() + 1,
-      year: date.getFullYear()
-    };
-
-    date.setDate( date.getDate() - 1 );
-
-    const from = {
-      day: date.getDate(),
-      month: date.getMonth() + 1,
-      year: date.getFullYear()
-    };
-
-    return `${base_url}start_date=${from.year}-${from.month}-${from.day}&end_date=${to.year}-${to.month}-${to.day}&api_key=${API_KEY}
-    `;
+    return `https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?rows=1&api_key=${API_KEY}`;
   }
 
   createForm() {

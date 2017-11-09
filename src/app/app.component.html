@@ -10,8 +10,10 @@
       <form [formGroup]="mortgageForm" novalidate (keyup)="checkControls($event)">
 
         <!-- These buttons are for testing purposes only -->
-        <button class="button" (click)="fillForm()">Fill Form</button>
-        <button class="button" (click)="resetForm()">Clear Form</button>
+        <div *ngIf="showDevButtons">
+          <button class="button" (click)="fillForm()">Fill Form</button>
+          <button class="button" (click)="resetForm()">Clear Form</button>
+        </div>
         <!-- These buttons are for testing purposes only -->
 
         <div class="columns">
@@ -28,13 +30,13 @@
                 </span>
               </div>
               <div *ngIf="validControl('surname') === false">
-                <p *ngIf="mortgageForm.get('surname').errors.minlength" class="help is-danger">
+                <p *ngIf="surname().errors.minlength" class="help is-danger">
                   Your surname must be at least 2 characters long
                 </p>
-                <p *ngIf="mortgageForm.get('surname').errors.required" class="help is-danger">
+                <p *ngIf="surname().errors.required" class="help is-danger">
                   Please enter your surname
                 </p>
-                <p *ngIf="mortgageForm.get('surname').errors.pattern" class="help is-danger">
+                <p *ngIf="surname().errors.pattern" class="help is-danger">
                   Your surname cannot contain any numbers or special characters
                 </p>
               </div>
@@ -52,7 +54,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('email') === false">
-                <p *ngIf="mortgageForm.get('email').errors.email || mortgageForm.get('email').errors.required" class="help is-danger">
+                <p *ngIf="email().errors.email || email().errors.required" class="help is-danger">
                   Please enter a valid email address
                 </p>
               </div>
@@ -70,7 +72,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('phone') === false">
-                <p *ngIf="mortgageForm.get('phone').errors.required || mortgageForm.get('phone').errors.pattern" class="help is-danger">
+                <p *ngIf="phone().errors.required || phone().errors.pattern" class="help is-danger">
                   Please enter a valid phone number
                 </p>
               </div>
@@ -88,7 +90,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('salary') === false">
-                <p *ngIf="mortgageForm.get('salary').errors.required || mortgageForm.get('salary').errors.pattern || mortgageForm.get('salary').errors.min || mortgageForm.get('salary').errors.minlength" class="help is-danger">
+                <p *ngIf="salary().errors.required || salary().errors.pattern || salary().errors.min || salary().errors.minlength" class="help is-danger">
                   Please enter a valid salary
                 </p>
               </div>
@@ -106,7 +108,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('deposit') === false">
-                <p *ngIf="mortgageForm.get('deposit').errors.required || mortgageForm.get('deposit').errors.pattern || mortgageForm.get('deposit').errors.min || mortgageForm.get('deposit').errors.minlength" class="help is-danger">
+                <p *ngIf="deposit().errors.required || deposit().errors.pattern || deposit().errors.min || deposit().errors.minlength" class="help is-danger">
                   Please enter a valid deposit amount
                 </p>
               </div>
@@ -114,13 +116,13 @@
 
             <div class="columns">
 
-              <div class="column">
+              <div class="column is-5">
                 <div class="field">
-                  <label class="label">Loan Term (Years)</label>
+                  <label class="label">Loan Term</label>
                   <div class="control">
                     <div class="select">
                       <select [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
-                        <option *ngFor="let term of terms" [value]="term">{{term}}</option>
+                        <option *ngFor="let term of terms" [value]="term">{{term}} years</option>
                       </select>
                     </div>
                   </div>
@@ -155,7 +157,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('loanAmount') === false">
-                <p *ngIf="mortgageForm.get('loanAmount').errors.required || mortgageForm.get('loanAmount').errors.pattern || mortgageForm.get('loanAmount').errors.min || mortgageForm.get('loanAmount').errors.minlength" class="help is-danger">
+                <p *ngIf="loanAmount().errors.required || loanAmount().errors.pattern || loanAmount().errors.min || loanAmount().errors.minlength" class="help is-danger">
                   Please enter a valid loan amount
                 </p>
               </div>
@@ -166,9 +168,10 @@
       </form>
     </div>
     <div class="column is-6">
+      <h2 class="subtitle has-text-centered">Your Options</h2>
       <div *ngIf="!completedForm()">
         <h2 class="subtitle has-text-centered">
-          Some of the details you provided are incorrect
+          Your mortgage options will be shown when you have entered all of your details
         </h2>
       </div>
       <div *ngIf="completedForm()">
@@ -187,7 +190,7 @@
                 <td>{{opt.name}}</td>
                 <td>{{opt.interestRate | percent}}</td>
                 <td>{{loan.term}} years</td>
-                <td>{{loan.amount | currency:'GBP':true:'4.0-0'}}</td>
+                <td>{{loan.amount | currency:'GBP':true:'3.2-2'}}</td>
                 <td>{{opt.totalPayable}}</td>
                 <td>{{opt.monthlyRepayment}}</td>
                 <td class="has-text-info" *ngIf="i === 0">

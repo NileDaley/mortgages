@@ -15,6 +15,8 @@ import 'rxjs/add/operator/map';
 
 export class AppComponent {
 
+  showDevButtons = true;
+
   mortgageForm: FormGroup;
   interestRate: any = 0.03;
 
@@ -27,7 +29,8 @@ export class AppComponent {
   tableHeadings: Array<string> = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
 
   constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: Http) {
-    console.log(this.interestRateURL());
+
+    /* Get the interest rate from Quandl API, assign the interest rate and then create options */
     http.get(this.interestRateURL())
       .map(res => res.json())
       .subscribe((res) => {
@@ -43,14 +46,16 @@ export class AppComponent {
     this.user = new User;
     this.loan = new Loan;
     this.createForm();
+    this.createGetters();
   }
 
-  interestRateURL() {
+  private interestRateURL() {
     const API_KEY = 'W4nq5nDFEKpkwzvRBEuk';
     return `https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?rows=1&api_key=${API_KEY}`;
   }
 
-  createForm() {
+  /* Define the controls of the form */
+  private createForm() {
     // Either +447000700200 or 07000700200
     const phoneRE = '(^[+]([0-9]{2})[0-9]{10}$)|(^[0-9]{11}$)';
     const numericRE = '^[0-9]+$';
@@ -83,7 +88,7 @@ export class AppComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(3),
+          Validators.minLength(1),
           Validators.min(0),
           Validators.pattern(numericRE)
         ]
@@ -105,7 +110,6 @@ export class AppComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(3),
           Validators.min(0),
           Validators.pattern(numericRE)
         ]
@@ -117,7 +121,8 @@ export class AppComponent {
     });
   }
 
-  createOptions() {
+  /* Create the array of Options */
+  private createOptions() {
     return [
       new Option('A', this.interestRate, 0.008, [10, 20], 4 * this.user.salary, 0, false),
       new Option('B', this.interestRate, 0.007, [10, 20], 4.1 * this.user.salary, 0, true),
@@ -125,6 +130,15 @@ export class AppComponent {
       new Option('D', this.interestRate, 0.004, [10, 30], 6 * (this.user.salary + this.loan.deposit), 20000, false),
       new Option('E', this.interestRate, 0.002, [10, 20], 7 * (this.user.salary + this.loan.deposit), 40000, true)
     ];
+  }
+
+  /* Create a getter for each form control so we can reference is using control() */
+  private createGetters() {
+    Object.keys(this.mortgageForm.controls).forEach((key) => {
+      this[key] = function() {
+        return this.mortgageForm.get(key);
+      };
+    });
   }
 
   fillForm() {
@@ -145,21 +159,25 @@ export class AppComponent {
     this.mortgageForm.reset();
   }
 
-  totalPayable(interest) {
+  /* Calculate the total amount payable in currency format */
+  private totalPayable(interest) {
     const calc = this.loan.amount * (1 + interest);
-    return this.currencyPipe.transform(calc, 'GBP' , true, '4.0-0');
-  }
-
-  monthlyRepayment(total, term) {
-    total = total.replace(/[£,]/g, '');
-    const calc = total / (term * 12);
     return this.currencyPipe.transform(calc, 'GBP' , true, '3.2-2');
   }
 
+  /* Calculate the monthly repayment in currency format */
+  private monthlyRepayment(total, term) {
+    total = total.replace(/[£,]/g, '');
+    const calc = total / (term * 12);
+    return this.currencyPipe.transform(calc, 'GBP' , true, '1.2-2');
+  }
+
+  /* Check if the whole form is completed and valid */
   completedForm() {
     return this.mortgageForm.status === 'VALID';
   }
 
+  /* Check if the given control is valid, if it has been changed and is not disabled */
   validControl(name: string) {
     const control = this.mortgageForm.get(name);
     if (control.pristine || control.disabled) {
@@ -168,6 +186,14 @@ export class AppComponent {
     return control.status === 'VALID';
   }
 
+  /*
+    Check if the control's value is valid
+      If true: enable all other inputs
+      If false: disable all other inputs
+
+    update the maxAmount for each option based on form value
+    filter the options
+   */
   checkControls($event) {
 
     const current = $event.target.attributes['formControlName'].value;
@@ -189,11 +215,11 @@ export class AppComponent {
 
     this.updateOptionAmounts();
 
-    // Filter available options
     this.filterOptions();
   }
 
-  updateOptionAmounts() {
+  /* Update the maxAmount for each option based on the curreny salary and deposit */
+  private updateOptionAmounts() {
     const sal = this.user.salary;
     const deposit = this.loan.deposit;
 
@@ -221,7 +247,8 @@ export class AppComponent {
 
   }
 
-  filterOptions() {
+  /* Filter the available options based on the criteria, then sort the options */
+  private filterOptions() {
     this.availableOptions = this.options;
     this.filterAccountNeeded();
     this.filterDeposit();
@@ -230,7 +257,8 @@ export class AppComponent {
     this.sortOptions();
   }
 
-  filterAccountNeeded() {
+  /* Filter the options based on whether an account is needed */
+  private filterAccountNeeded() {
     const hasAccount = String(this.user.hasAccount);
     if (hasAccount === 'false') {
       this.availableOptions = this.availableOptions.filter((opt) => {
@@ -240,28 +268,32 @@ export class AppComponent {
     }
   }
 
-  filterDeposit() {
+  /* Filter the options based on deposit value*/
+  private filterDeposit() {
     const deposit = this.loan.deposit;
     this.availableOptions = this.availableOptions.filter((opt) => {
       return opt.depositRequired <= deposit;
     });
   }
 
-  filterTerm() {
+  /* Filter the options based on the term selected */
+  private filterTerm() {
     const term = Number(this.loan.term);
     this.availableOptions = this.availableOptions.filter((opt) => {
       return opt.terms.includes(term);
     });
   }
 
-  filterLoanAmount() {
+  /* Filter the options based on the loan value */
+  private filterLoanAmount() {
     const requestAmount = Number(this.loan.amount);
     this.availableOptions = this.availableOptions.filter((opt) => {
       return requestAmount < opt.maxAmount;
     });
   }
 
-  sortOptions() {
+  /* Sort the options by lowest monthly payment */
+  private sortOptions() {
     this.availableOptions = this.availableOptions.sort((opt, other) => {
       const opt_amount: number = Number(opt.monthlyRepayment.replace(/[£,]/g, ''));
       const other_amount: number = Number(other.monthlyRepayment.replace(/[£,]/g, ''));

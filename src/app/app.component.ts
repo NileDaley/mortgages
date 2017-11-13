@@ -1,10 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Option } from './Option';
 import { User } from './User';
 import { Loan } from './Loan';
 import { HttpClient } from '@angular/common/http';
+import { Filter } from './Filter';
 
 @Component({
   selector: 'app-root',
@@ -31,14 +33,13 @@ export class AppComponent {
 
     /* Get the interest rate from Quandl API, assign the interest rate and then create options */
     http.get(this.interestRateURL())
-      .subscribe((res) => {
-        if (res['dataset'].data.length === 0) {
-          alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
-          this.options = this.createOptions();
-        } else {
+      .subscribe(res => {
+        if (res['dataset'].data.length > 0) {
           this.interestRate = res['dataset'].data[0][1] / 100;
-          this.options = this.createOptions();
+        } else {
+          alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
         }
+        this.createOptions();
       });
 
     this.user = new User;
@@ -47,13 +48,13 @@ export class AppComponent {
     this.createGetters();
   }
 
-  private interestRateURL() {
+  interestRateURL() {
     const API_KEY = 'W4nq5nDFEKpkwzvRBEuk';
     return `https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?rows=1&api_key=${API_KEY}`;
   }
 
   /* Define the controls of the form */
-  private createForm() {
+  createForm() {
     // Either +447000700200 or 07000700200
     const phoneRE = '(^[+]([0-9]{2})[0-9]{10}$)|(^[0-9]{11}$)';
     const numericRE = '^[0-9]+$';
@@ -120,8 +121,8 @@ export class AppComponent {
   }
 
   /* Create the array of Options */
-  private createOptions() {
-    return [
+  createOptions() {
+    this.options = [
       new Option('A', this.interestRate, 0.008, [10, 20], 4 * this.user.salary, 0, false),
       new Option('B', this.interestRate, 0.007, [10, 20], 4.1 * this.user.salary, 0, true),
       new Option('C', this.interestRate, 0.006, [20], 5 * (this.user.salary + this.loan.deposit), 10000, false),
@@ -130,8 +131,8 @@ export class AppComponent {
     ];
   }
 
-  /* Create a getter for each form control so we can reference is using control() */
-  private createGetters() {
+  /* Create a getter for each form control so we can reference is using control() rather than mortgageForm.get('control') */
+  createGetters() {
     Object.keys(this.mortgageForm.controls).forEach((key) => {
       this[key] = () => {
         return this.mortgageForm.get(key);
@@ -158,13 +159,13 @@ export class AppComponent {
   }
 
   /* Calculate the total amount payable in currency format */
-  private totalPayable(interest) {
+  totalPayable(interest) {
     const calc = this.loan.amount * (1 + interest);
     return this.currencyPipe.transform(calc, 'GBP' , true, '3.2-2');
   }
 
   /* Calculate the monthly repayment in currency format */
-  private monthlyRepayment(total, term) {
+  monthlyRepayment(total, term) {
     total = total.replace(/[£,]/g, '');
     const calc = total / (term * 12);
     return this.currencyPipe.transform(calc, 'GBP' , true, '1.2-2');
@@ -185,10 +186,7 @@ export class AppComponent {
   }
 
   /*
-    Check if the control's value is valid
-      If true: enable all other inputs
-      If false: disable all other inputs
-
+    disable all other inputs if the current input's value is invalid
     update the maxAmount for each option based on form value
     filter the options
    */
@@ -198,7 +196,6 @@ export class AppComponent {
     const status = this.mortgageForm.get(current).status;
     const forbidden = ['term', 'hasAccount'];
 
-    // Enable other controls is current control value is invalid
     if (!forbidden.includes(current)) {
       Object.keys(this.mortgageForm.controls).forEach((key) => {
         if (key !== current) {
@@ -212,12 +209,12 @@ export class AppComponent {
     }
 
     this.updateOptionAmounts();
-
     this.filterOptions();
+
   }
 
   /* Update the maxAmount for each option based on the curreny salary and deposit */
-  private updateOptionAmounts() {
+  updateOptionAmounts() {
     const sal = this.user.salary;
     const deposit = this.loan.deposit;
 
@@ -246,64 +243,9 @@ export class AppComponent {
   }
 
   /* Filter the available options based on the criteria, then sort the options */
-  private filterOptions() {
-    this.availableOptions = this.options;
-    this.filterAccountNeeded();
-    this.filterDeposit();
-    this.filterTerm();
-    this.filterLoanAmount();
-    this.sortOptions();
-  }
-
-  /* Filter the options based on whether an account is needed */
-  private filterAccountNeeded() {
-    const hasAccount = String(this.user.hasAccount);
-    if (hasAccount === 'false') {
-      this.availableOptions = this.availableOptions.filter((opt) => {
-        // Cast the boolean to string to do comparison
-        return opt.accountNeeded === false;
-      });
-    }
-  }
-
-  /* Filter the options based on deposit value*/
-  private filterDeposit() {
-    const deposit = this.loan.deposit;
-    this.availableOptions = this.availableOptions.filter((opt) => {
-      return opt.depositRequired <= deposit;
-    });
-  }
-
-  /* Filter the options based on the term selected */
-  private filterTerm() {
-    const term = Number(this.loan.term);
-    this.availableOptions = this.availableOptions.filter((opt) => {
-      return opt.terms.includes(term);
-    });
-  }
-
-  /* Filter the options based on the loan value */
-  private filterLoanAmount() {
-    const requestAmount = Number(this.loan.amount);
-    this.availableOptions = this.availableOptions.filter((opt) => {
-      return requestAmount < opt.maxAmount;
-    });
-  }
-
-  /* Sort the options by lowest monthly payment */
-  private sortOptions() {
-    this.availableOptions = this.availableOptions.sort((opt, other) => {
-      const opt_amount: number = Number(opt.monthlyRepayment.replace(/[£,]/g, ''));
-      const other_amount: number = Number(other.monthlyRepayment.replace(/[£,]/g, ''));
-
-      /*
-        returns:
-          negative if opt < other
-          0 if opt === other
-          positive if opt > other
-      */
-      return opt_amount - other_amount;
-    });
+  filterOptions() {
+    const f = new Filter(this.options);
+    this.availableOptions = f.filter(this.user, this.loan);
   }
 
 }

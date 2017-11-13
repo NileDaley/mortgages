@@ -8,9 +8,8 @@
     <div class="column is-6">
       <h2 class="subtitle has-text-centered">Your Details</h2>
       <form [formGroup]="mortgageForm" novalidate (keyup)="checkControls($event)">
-
         <!-- These buttons are for testing purposes only -->
-        <div *ngIf="showDevButtons">
+        <div *ngIf="showDevButtons" class="has-text-centered">
           <button class="button" (click)="fillForm()">Fill Form</button>
           <button class="button" (click)="resetForm()">Clear Form</button>
         </div>
@@ -192,9 +191,8 @@
                 <td>{{loan.term}} years</td>
                 <td>{{loan.amount | currency:'GBP':true:'3.2-2'}}</td>
                 <td>{{opt.totalPayable}}</td>
-                <td>{{opt.monthlyRepayment}}</td>
-                <td class="has-text-info" *ngIf="i === 0">
-                  <p class="has-text-info" *ngIf="i === 0">Best Option!</p>
+                <td>
+                  <span>{{opt.monthlyRepayment}}</span><span *ngIf="i === 0" class="tag rounded is-success">Best Option!</span>
                 </td>
               </tr>
             </tbody>

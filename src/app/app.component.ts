@@ -4,8 +4,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Option } from './Option';
 import { User } from './User';
 import { Loan } from './Loan';
-import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -28,17 +27,16 @@ export class AppComponent {
   terms: Array<number> = [10, 20, 30];
   tableHeadings: Array<string> = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
 
-  constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: Http) {
+  constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: HttpClient) {
 
     /* Get the interest rate from Quandl API, assign the interest rate and then create options */
     http.get(this.interestRateURL())
-      .map(res => res.json())
       .subscribe((res) => {
-        if (res.dataset.data.length === 0) {
+        if (res['dataset'].data.length === 0) {
           alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
           this.options = this.createOptions();
         } else {
-          this.interestRate = res.dataset.data[0][1] / 100;
+          this.interestRate = res['dataset'].data[0][1] / 100;
           this.options = this.createOptions();
         }
       });
@@ -135,7 +133,7 @@ export class AppComponent {
   /* Create a getter for each form control so we can reference is using control() */
   private createGetters() {
     Object.keys(this.mortgageForm.controls).forEach((key) => {
-      this[key] = function() {
+      this[key] = () => {
         return this.mortgageForm.get(key);
       };
     });

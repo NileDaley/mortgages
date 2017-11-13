@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Option } from './Option';
 import { User } from './User';
 import { Loan } from './Loan';

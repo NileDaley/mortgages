@@ -54,9 +54,11 @@ export class AppComponent {
 
   // Define the controls of the form
   createForm(): void {
-    // Either +447000700200 or 07000700200
+    // Either +447000700200 or 07000700200, also allows dashes
     const phoneRE = '^[+]((?:[0-9]-?){12})$|^(?:[0-9]-?){11}$';
+    // Allows numbers followed by optional 2 decimal places
     const numericRE = '^[0-9]+([\.][0-9]{2})?$';
+    // Allows dashes in surnames
     const alphaRE = '([A-z]+[-]?[A-z])+';
 
     this.mortgageForm = this.fb.group({

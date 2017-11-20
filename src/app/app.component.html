@@ -18,13 +18,13 @@
         <div class="columns">
           <div class="column is-8 is-offset-2">
             <div class="field">
-              <label class="label">Surname</label>
+              <label class="label" for="surname">Surname</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="user.surname" formControlName="surname" type="text" class="input" [ngClass]="{
+                <input id="surname" [(ngModel)]="user.surname" formControlName="surname" type="text" class="input" [ngClass]="{
                   'is-success': validControl('surname') === true,
                   'is-danger': validControl('surname') === false
                 }">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-user"></i>
                 </span>
               </div>
@@ -42,13 +42,13 @@
             </div>
 
             <div class="field">
-              <label class="label">Email Address</label>
+              <label for="email" class="label">Email Address</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="user.email" formControlName="email" type="text" class="input" [ngClass]="{
+                <input id="email" [(ngModel)]="user.email" formControlName="email" type="text" class="input" [ngClass]="{
                   'is-success': validControl('email') === true,
                   'is-danger': validControl('email') === false
                 }">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-envelope"></i>
                 </span>
               </div>
@@ -60,13 +60,13 @@
             </div>
 
             <div class="field">
-              <label class="label">Phone number</label>
+              <label for="phone" class="label">Phone number</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="user.phone" formControlName="phone" [ngClass]="{
+                <input id="phone" [(ngModel)]="user.phone" formControlName="phone" [ngClass]="{
                   'is-success': validControl('phone') === true,
                   'is-danger': validControl('phone') === false
                 }" type="text" class="input">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-phone"></i>
                 </span>
               </div>
@@ -78,13 +78,13 @@
             </div>
 
             <div class="field">
-              <label class="label">Annual Salary</label>
+              <label for="salary" class="label">Annual Salary</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="user.salary" formControlName="salary" type="text" class="input" [ngClass]="{
+                <input id="salary" [(ngModel)]="user.salary" formControlName="salary" type="text" class="input" [ngClass]="{
                   'is-success': validControl('salary') === true,
                   'is-danger': validControl('salary') === false
                 }">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-gbp"></i>
                 </span>
               </div>
@@ -96,13 +96,13 @@
             </div>
 
             <div class="field">
-              <label class="label">Deposit Amount</label>
+              <label for="deposit" class="label">Deposit Amount</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="loan.deposit" formControlName="deposit" type="text" class="input" [ngClass]="{
+                <input id="deposit" [(ngModel)]="loan.deposit" formControlName="deposit" type="text" class="input" [ngClass]="{
                   'is-success': validControl('deposit') === true,
                   'is-danger': validControl('deposit') === false
                 }">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-gbp"></i>
                 </span>
               </div>
@@ -117,10 +117,10 @@
 
               <div class="column is-5">
                 <div class="field">
-                  <label class="label">Loan Term</label>
+                  <label for="term" class="label">Loan Term</label>
                   <div class="control">
                     <div class="select">
-                      <select [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
+                      <select id="term" [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
                         <option *ngFor="let term of terms" [value]="term">{{term}} years</option>
                       </select>
                     </div>
@@ -130,10 +130,10 @@
 
               <div class="column">
                 <div class="field">
-                  <label class="label">Do you have an account?</label>
+                  <label for="hasAccount" class="label">Do you have an account?</label>
                   <div class="control">
                     <div class="select">
-                      <select [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">
+                      <select id="hasAccount" [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">
                         <option value="false" selected>No</option>
                         <option value="true">Yes</option>
                       </select>
@@ -145,13 +145,13 @@
             </div>
 
             <div class="field">
-              <label class="label">Loan Amount</label>
+              <label for="loanAmount" class="label">Loan Amount</label>
               <div class="control has-icons-left">
-                <input [(ngModel)]="loan.amount" formControlName="loanAmount" type="text" class="input" [ngClass]="{
+                <input id="loanAmount" [(ngModel)]="loan.amount" formControlName="loanAmount" type="text" class="input" [ngClass]="{
                   'is-success': validControl('loanAmount') === true,
                   'is-danger': validControl('loanAmount') === false
                 }">
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left" aria-hidden="true">
                   <i class="fa fa-gbp"></i>
                 </span>
               </div>

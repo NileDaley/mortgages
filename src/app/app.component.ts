@@ -25,12 +25,12 @@ export class AppComponent {
   options: Array<Option>;
   availableOptions: Array<Option>;
 
-  terms: Array<number> = [10, 20, 30];
-  tableHeadings: Array<string> = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
+  terms = [10, 20, 30];
+  tableHeadings = ['', 'Interest Rate', 'Mortgage Length', 'Loan Amount', 'Amount Repayable', 'Monthly Repayment', '' ];
 
   constructor(private fb: FormBuilder, private currencyPipe: CurrencyPipe, private http: HttpClient) {
 
-    /* Get the interest rate from Quandl API, assign the interest rate and then create options */
+    // Get the interest rate from Quandl API, assign the interest rate and then create options //
     http.get(this.interestRateURL())
       .subscribe(res => {
         if (res['dataset'].data.length > 0) {
@@ -38,7 +38,7 @@ export class AppComponent {
         } else {
           alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
         }
-        this.createOptions();
+        this.options = this.createOptions();
       });
 
     this.user = new User;
@@ -47,17 +47,17 @@ export class AppComponent {
     this.createGetters();
   }
 
-  interestRateURL() {
+  interestRateURL(): string {
     const API_KEY = 'W4nq5nDFEKpkwzvRBEuk';
     return `https://www.quandl.com/api/v3/datasets/BOE/IUDBEDR.json?rows=1&api_key=${API_KEY}`;
   }
 
-  /* Define the controls of the form */
-  createForm() {
+  // Define the controls of the form
+  createForm(): void {
     // Either +447000700200 or 07000700200
-    const phoneRE = '(^[+]([0-9]{2})[0-9]{10}$)|(^[0-9]{11}$)';
-    const numericRE = '^[0-9]+$';
-    const alphaRE = '[A-z]+';
+    const phoneRE = '^[+]((?:[0-9]-?){12})$|^(?:[0-9]-?){11}$';
+    const numericRE = '^[0-9]+([\.][0-9]{2})?$';
+    const alphaRE = '([A-z]+[-]?[A-z])+';
 
     this.mortgageForm = this.fb.group({
       surname: [
@@ -119,27 +119,27 @@ export class AppComponent {
     });
   }
 
-  /* Create the array of Options */
-  createOptions() {
-    this.options = [
-      new Option('A', this.interestRate, 0.008, [10, 20], 4 * this.user.salary, 0, false),
-      new Option('B', this.interestRate, 0.007, [10, 20], 4.1 * this.user.salary, 0, true),
-      new Option('C', this.interestRate, 0.006, [20], 5 * (this.user.salary + this.loan.deposit), 10000, false),
-      new Option('D', this.interestRate, 0.004, [10, 30], 6 * (this.user.salary + this.loan.deposit), 20000, false),
-      new Option('E', this.interestRate, 0.002, [10, 20], 7 * (this.user.salary + this.loan.deposit), 40000, true)
+  // Create the array of Options
+  createOptions(): Array<Option> {
+    return [
+      new Option('A', this.interestRate, 0.008, [10, 20], 0, false, 4 * this.user.salary),
+      new Option('B', this.interestRate, 0.007, [10, 20], 0, true, 4.1 * this.user.salary),
+      new Option('C', this.interestRate, 0.006, [20], 10000, false, 5 * (this.user.salary + this.loan.deposit)),
+      new Option('D', this.interestRate, 0.004, [10, 30], 20000, false, 6 * (this.user.salary + this.loan.deposit)),
+      new Option('E', this.interestRate, 0.002, [10, 20], 40000, true, 7 * (this.user.salary + this.loan.deposit))
     ];
   }
 
-  /* Create a getter for each form control so we can reference is using control() rather than mortgageForm.get('control') */
-  createGetters() {
-    Object.keys(this.mortgageForm.controls).forEach((key) => {
+  // Create a getter for each form control so we can reference is using control() rather than mortgageForm.get('control')
+  createGetters(): void {
+    Object.keys(this.mortgageForm.controls).forEach(key => {
       this[key] = () => {
         return this.mortgageForm.get(key);
       };
     });
   }
 
-  fillForm() {
+  fillForm(): void {
     this.mortgageForm.setValue({
       surname: 'Daley',
       email: 'niledaley@outlook.com',
@@ -153,30 +153,30 @@ export class AppComponent {
 
   }
 
-  resetForm() {
+  resetForm(): void {
     this.mortgageForm.reset();
   }
 
-  /* Calculate the total amount payable in currency format */
-  totalPayable(interest) {
+  // Calculate the total amount payable in currency format
+  totalPayable(interest): string {
     const calc = this.loan.amount * (1 + interest);
     return this.currencyPipe.transform(calc, 'GBP' , true, '3.2-2');
   }
 
-  /* Calculate the monthly repayment in currency format */
-  monthlyRepayment(total, term) {
+  // Calculate the monthly repayment in currency format
+  monthlyRepayment(total, term): string {
     total = total.replace(/[£,]/g, '');
     const calc = total / (term * 12);
     return this.currencyPipe.transform(calc, 'GBP' , true, '1.2-2');
   }
 
-  /* Check if the whole form is completed and valid */
-  completedForm() {
+  // Check if the whole form is completed and valid
+  completedForm(): Boolean {
     return this.mortgageForm.status === 'VALID';
   }
 
-  /* Check if the given control is valid, if it has been changed and is not disabled */
-  validControl(name: string) {
+  // Check if the given control is valid, if it has been changed and is not disabled
+  validControl(name: string): Boolean {
     const control = this.mortgageForm.get(name);
     if (control.pristine || control.disabled) {
       return null;
@@ -188,61 +188,41 @@ export class AppComponent {
     disable all other inputs if the current input's value is invalid
     update the maxAmount for each option based on form value
     filter the options
-   */
-  checkControls($event) {
+  */
+  checkControls(event): void {
 
-    const current = $event.target.attributes['formControlName'].value;
+    const current = event.target.attributes['formControlName'].value;
     const status = this.mortgageForm.get(current).status;
     const forbidden = ['term', 'hasAccount'];
 
     if (!forbidden.includes(current)) {
-      Object.keys(this.mortgageForm.controls).forEach((key) => {
+      Object.keys(this.mortgageForm.controls).forEach(key => {
         if (key !== current) {
-          if (status === 'INVALID') {
-            this.mortgageForm.get(key).disable();
-          } else {
-            this.mortgageForm.get(key).enable();
-          }
+          status === 'INVALID' ? this.mortgageForm.get(key).disable() : this.mortgageForm.get(key).enable();
         }
       });
     }
 
-    this.updateOptionAmounts();
+    this.updateOptions();
     this.filterOptions();
 
   }
 
-  /* Update the maxAmount for each option based on the curreny salary and deposit */
-  updateOptionAmounts() {
+  // Update the maxAmount for each option based on the curreny salary and deposit
+  updateOptions(): void {
     const sal = this.user.salary;
     const deposit = this.loan.deposit;
 
-    this.options.forEach((opt) => {
-      switch (opt.name) {
-        case 'A':
-          opt.maxAmount = sal * 4;
-          break;
-        case 'B':
-          opt.maxAmount = sal * 4.1;
-          break;
-        case 'C':
-          opt.maxAmount = (sal + deposit) * 5;
-          break;
-        case 'D':
-          opt.maxAmount = (sal + deposit) * 6;
-          break;
-        case 'E':
-          opt.maxAmount = (sal + deposit) * 7;
-          break;
-      }
+    this.options.forEach(opt => {
+      opt.updateMaxAmount(sal, deposit);
       opt.totalPayable = this.totalPayable(opt.interestRate);
       opt.monthlyRepayment = this.monthlyRepayment(opt.totalPayable, this.loan.term);
     });
 
   }
 
-  /* Filter the available options based on the criteria, then sort the options */
-  filterOptions() {
+  // Filter the available options based on the criteria, then sort the options
+  filterOptions(): void {
     const f = new Filter(this.options);
     this.availableOptions = f.filter(this.user, this.loan);
   }

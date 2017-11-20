@@ -3,57 +3,60 @@ import { Loan } from './Loan';
 import { User } from './User';
 
 export class Filter {
-  private availableOptions: Array<Option>;
+  availableOptions: Array<Option>;
 
   constructor(options) {
     this.availableOptions = options;
   }
 
   filter(user: User, loan: Loan): Array<Option> {
-    this.filterAccountNeeded(user.hasAccount);
-    this.filterDeposit(loan.deposit);
-    this.filterTerm(loan.term);
-    this.filterLoanAmount(loan.amount);
-    return this.availableOptions.sort(this.sort);
+    this.availableOptions = this.filterAccountNeeded(user.hasAccount);
+    this.availableOptions = this.filterDeposit(loan.deposit);
+    this.availableOptions = this.filterTerm(loan.term);
+    this.availableOptions = this.filterLoanAmount(loan.amount);
+    this.availableOptions = this.availableOptions.sort(this.sort);
+    return this.availableOptions;
   }
 
-  /* Filter the options based on whether an account is needed */
-  private filterAccountNeeded(hasAccount) {
+  // Filter the options based on whether an account is needed
+  filterAccountNeeded(hasAccount): Array<Option> {
     hasAccount = String(hasAccount);
     if (hasAccount === 'false') {
-      this.availableOptions = this.availableOptions.filter((opt) => {
+      return this.availableOptions.filter(opt => {
         // Cast the boolean to string to do comparison
         return opt.accountNeeded === false;
       });
+    } else {
+      return this.availableOptions;
     }
   }
 
-  /* Filter the options based on deposit value*/
-  private filterDeposit(deposit) {
-    this.availableOptions = this.availableOptions.filter((opt) => {
+  // Filter the options based on deposit value
+  filterDeposit(deposit): Array<Option> {
+    return  this.availableOptions.filter(opt => {
       return opt.depositRequired <= deposit;
     });
   }
 
-  /* Filter the options based on the term selected */
-  private filterTerm(term) {
+  // Filter the options based on the term selected
+  filterTerm(term): Array<Option> {
     term = Number(term);
-    this.availableOptions = this.availableOptions.filter((opt) => {
+    return this.availableOptions.filter(opt => {
       return opt.terms.includes(term);
     });
   }
 
-  /* Filter the options based on the loan value */
-  private filterLoanAmount(amount) {
+  // Filter the options based on the loan value
+  filterLoanAmount(amount): Array<Option> {
     amount = Number(amount);
-    this.availableOptions = this.availableOptions.filter((opt) => {
-      return amount < opt.maxAmount;
+    return this.availableOptions.filter(opt => {
+      return amount <= opt.maxAmount;
     });
   }
 
-  private sort(opt, other) {
+  sort(opt, other): number {
     const opt_amount: number = Number(opt.monthlyRepayment.replace(/[£,]/g, ''));
-      const other_amount: number = Number(other.monthlyRepayment.replace(/[£,]/g, ''));
+    const other_amount: number = Number(other.monthlyRepayment.replace(/[£,]/g, ''));
 
       /*
         returns:

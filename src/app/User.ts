@@ -1,7 +1,7 @@
 export class User {
-  surname: String;
-  email: String;
-  phone: String;
+  surname: string;
+  email: string;
+  phone: string;
   salary: any;
   hasAccount: Boolean;
 

@@ -15,7 +15,7 @@ import { Filter } from './Filter';
 
 export class AppComponent {
 
-  showDevButtons = true;
+  showDevButtons = false;
 
   mortgageForm: FormGroup;
   interestRate: any = 0.03;
@@ -57,9 +57,11 @@ export class AppComponent {
     // Either +447000700200 or 07000700200, also allows dashes
     const phoneRE = '^[+]((?:[0-9]-?){12})$|^(?:[0-9]-?){11}$';
     // Allows numbers followed by optional 2 decimal places
-    const numericRE = '^[0-9]+([\.][0-9]{2})?$';
+    const numericRE = '^[0-9]+([\.][0-9]{1,2})?$';
     // Allows dashes in surnames
-    const alphaRE = '([A-z]+[-]?[A-z])+';
+    const alphaRE = '^([A-z]+[\' -]?[A-z]+)+$';
+    // Ensures emails end in . followed by letter, as angular email validator allows example@example which isnt a valid email
+    const emailRE = '.+[\.][A-z]+$';
 
     this.mortgageForm = this.fb.group({
       surname: [
@@ -74,7 +76,8 @@ export class AppComponent {
         '',
         [
           Validators.required,
-          Validators.email
+          Validators.email,
+          Validators.pattern(emailRE)
         ]
       ],
       phone: [

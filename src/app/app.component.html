@@ -36,7 +36,7 @@
                   Please enter your surname
                 </p>
                 <p *ngIf="surname().errors.pattern" class="help is-danger">
-                  Your surname cannot contain any numbers or special characters
+                  Your surname must contain only letters, apostrophies and hypens, and cannot start or end with a non-letter
                 </p>
               </div>
             </div>
@@ -53,7 +53,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('email') === false">
-                <p *ngIf="email().errors.email || email().errors.required" class="help is-danger">
+                <p *ngIf="email().errors.email || email().errors.required || email().errors.pattern" class="help is-danger">
                   Please enter a valid email address
                 </p>
               </div>
@@ -90,7 +90,7 @@
               </div>
               <div *ngIf="validControl('salary') === false">
                 <p *ngIf="salary().errors.required || salary().errors.pattern || salary().errors.min || salary().errors.minlength" class="help is-danger">
-                  Please enter a valid salary
+                  Please enter a valid salary amount
                 </p>
               </div>
             </div>

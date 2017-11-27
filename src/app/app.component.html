@@ -53,7 +53,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('email') === false">
-                <p *ngIf="email().errors.email || email().errors.required" class="help is-danger">
+                <p *ngIf="email().errors.required || email().errors.email" class="help is-danger">
                   Please enter a valid email address
                 </p>
               </div>
@@ -71,7 +71,10 @@
                 </span>
               </div>
               <div *ngIf="validControl('phone') === false">
-                <p *ngIf="phone().errors.required || phone().errors.pattern" class="help is-danger">
+                <p *ngIf="phone().errors.required" class="help is-danger">
+                  Please enter a phone number
+                </p>
+                <p *ngIf="phone().errors.pattern" class="help is-danger">
                   Please enter a valid phone number
                 </p>
               </div>
@@ -89,8 +92,11 @@
                 </span>
               </div>
               <div *ngIf="validControl('salary') === false">
-                <p *ngIf="salary().errors.required || salary().errors.pattern || salary().errors.min || salary().errors.minlength" class="help is-danger">
-                  Please enter a valid salary
+                <p *ngIf="salary().errors.required" class="help is-danger">
+                  Please enter a salary amount
+                </p>
+                <p *ngIf="salary().errors.pattern || salary().errors.min || salary().errors.minlength" class="help is-danger">
+                  Please enter a valid salary amount
                 </p>
               </div>
             </div>
@@ -107,7 +113,10 @@
                 </span>
               </div>
               <div *ngIf="validControl('deposit') === false">
-                <p *ngIf="deposit().errors.required || deposit().errors.pattern || deposit().errors.min || deposit().errors.minlength" class="help is-danger">
+                <p *ngIf="deposit().errors.required" class="help is-danger">
+                  Please enter a deposit amount
+                </p>
+                <p *ngIf="deposit().errors.pattern || deposit().errors.min || deposit().errors.minlength" class="help is-danger">
                   Please enter a valid deposit amount
                 </p>
               </div>
@@ -156,7 +165,10 @@
                 </span>
               </div>
               <div *ngIf="validControl('loanAmount') === false">
-                <p *ngIf="loanAmount().errors.required || loanAmount().errors.pattern || loanAmount().errors.min || loanAmount().errors.minlength" class="help is-danger">
+                <p *ngIf="loanAmount().errors.required" class="help is-danger">
+                  Please enter a loan amount
+                </p>
+                <p *ngIf="loanAmount().errors.pattern || loanAmount().errors.min || loanAmount().errors.minlength" class="help is-danger">
                   Please enter a valid loan amount
                 </p>
               </div>

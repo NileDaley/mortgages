@@ -53,7 +53,7 @@
                 </span>
               </div>
               <div *ngIf="validControl('email') === false">
-                <p *ngIf="email().errors.required || email().errors.email" class="help is-danger">
+                <p *ngIf="email().errors.required || email().errors.email || email().errors.pattern" class="help is-danger">
                   Please enter a valid email address
                 </p>
               </div>
@@ -128,7 +128,7 @@
                 <div class="field">
                   <label for="term" class="label">Loan Term</label>
                   <div class="control">
-                    <div class="select">
+                    <div class="select" [ngClass]="{'is-success': this.mortgageForm.get('term').touched === true}">
                       <select id="term" [(ngModel)]="loan.term" formControlName="term" (change)="checkControls($event)">
                         <option *ngFor="let term of terms" [value]="term">{{term}} years</option>
                       </select>
@@ -141,8 +141,8 @@
                 <div class="field">
                   <label for="hasAccount" class="label">Do you have an account?</label>
                   <div class="control">
-                    <div class="select">
-                      <select id="hasAccount" [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)">
+                    <div class="select" [ngClass]="{'is-success': this.mortgageForm.get('hasAccount').touched === true}">
+                      <select id="hasAccount" [(ngModel)]="user.hasAccount" formControlName="hasAccount" (change)="checkControls($event)" >
                         <option value="false" selected>No</option>
                         <option value="true">Yes</option>
                       </select>

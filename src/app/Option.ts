@@ -20,7 +20,7 @@ export class Option {
     this.accountNeeded = account;
   }
 
-  updateMaxAmount(salary, deposit): void {
+  updateMaxAmount(salary: number, deposit: number): void {
     switch (this.name) {
       case 'A':
         this.maxAmount = salary * 4;

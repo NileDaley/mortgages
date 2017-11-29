@@ -2,7 +2,7 @@ export class User {
   surname: string;
   email: string;
   phone: string;
-  salary: any;
+  salary: number;
   hasAccount: Boolean;
 
   constructor() {

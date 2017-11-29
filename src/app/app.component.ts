@@ -36,7 +36,8 @@ export class AppComponent {
         if (res['dataset'].data.length > 0) {
           this.interestRate = res['dataset'].data[0][1] / 100;
         } else {
-          alert('Unfortunately it was not possible to get the current interest rate, it will now be set to the previous value of 3%');
+          alert(`Unfortunately it was not possible to get the current interest rate,
+                 it will now be set to the previous value of 3 % `);
         }
         this.options = this.createOptions();
       });
@@ -126,6 +127,7 @@ export class AppComponent {
 
   // Create the array of Options
   createOptions(): Array<Option> {
+    console.log(this.user.salary + this.loan.deposit);
     return [
       new Option('A', this.interestRate, 0.008, [10, 20], 0, false, 4 * this.user.salary),
       new Option('B', this.interestRate, 0.007, [10, 20], 0, true, 4.1 * this.user.salary),
@@ -215,8 +217,8 @@ export class AppComponent {
 
   // Update the maxAmount for each option based on the curreny salary and deposit
   updateOptions(): void {
-    const sal = this.user.salary;
-    const deposit = this.loan.deposit;
+    const sal = Number(this.user.salary);
+    const deposit = Number(this.loan.deposit);
 
     this.options.forEach(opt => {
       opt.updateMaxAmount(sal, deposit);

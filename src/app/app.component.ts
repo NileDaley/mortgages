@@ -16,6 +16,7 @@ import { Filter } from './Filter';
 export class AppComponent {
 
   showDevButtons = false;
+  errors: Array<string> = [];
 
   mortgageForm: FormGroup;
   interestRate: any = 0.03;
@@ -36,9 +37,11 @@ export class AppComponent {
         if (res['dataset'].data.length > 0) {
           this.interestRate = res['dataset'].data[0][1] / 100;
         } else {
-          alert(`Unfortunately it was not possible to get the current interest rate,
-                 it will now be set to the previous value of 3 % `);
+          this.errors.push('It was not possible to retrieve the interest rate, it will now be set to the previous value of 3%');
         }
+        this.options = this.createOptions();
+      }, err => {
+        this.errors.push('It was not possible to retrieve the interest rate, it will now be set to the previous value of 3%');
         this.options = this.createOptions();
       });
 
@@ -232,6 +235,11 @@ export class AppComponent {
   filterOptions(): void {
     const f = new Filter(this.options);
     this.availableOptions = f.filter(this.user, this.loan);
+  }
+
+  // Remove a given error from the errors array
+  deleteError(err): void {
+    this.errors.splice(this.errors.indexOf(err), 1);
   }
 
 }

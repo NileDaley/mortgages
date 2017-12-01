@@ -4,6 +4,14 @@
       <h1 class="title has-text-centered">Mortgage Calculator</h1>
     </div>
   </div>
+  <div *ngIf="errors" class="columns">
+    <div class="column is-6 is-offset-3">
+      <div *ngFor="let err of errors" class="notification is-danger">
+        <button class="delete" (click)="deleteError(err)"></button>
+        <p>{{err}}</p>
+      </div>
+    </div>
+  </div>
   <div class="columns">
     <div class="column is-6">
       <h2 class="subtitle has-text-centered">Your Details</h2>

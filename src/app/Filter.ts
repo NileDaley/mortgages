@@ -11,7 +11,7 @@ export class Filter {
 
   filter(user: User, loan: Loan): Array<Option> {
     this.availableOptions = this.filterAccountNeeded(user.hasAccount);
-    this.availableOptions = this.filterDeposit(loan.deposit);
+    this.availableOptions = this.filterDeposit(loan.deposit, loan.amount);
     this.availableOptions = this.filterTerm(loan.term);
     this.availableOptions = this.filterLoanAmount(loan.amount);
     this.availableOptions = this.availableOptions.sort(this.sort);
@@ -32,10 +32,14 @@ export class Filter {
   }
 
   // Filter the options based on deposit value
-  filterDeposit(deposit): Array<Option> {
-    return  this.availableOptions.filter(opt => {
-      return opt.depositRequired <= deposit;
-    });
+  filterDeposit(deposit, loanAmount): Array<Option> {
+    if (loanAmount > deposit) {
+      return this.availableOptions.filter(opt => {
+        return opt.depositRequired <= deposit;
+      });
+    } else {
+      return [];
+    }
   }
 
   // Filter the options based on the term selected

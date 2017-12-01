@@ -15,7 +15,7 @@ import { Filter } from './Filter';
 
 export class AppComponent {
 
-  showDevButtons = false;
+  showDevButtons = true;
   errors: Array<string> = [];
 
   mortgageForm: FormGroup;

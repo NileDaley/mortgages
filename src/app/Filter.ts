@@ -49,9 +49,13 @@ export class Filter {
   // Filter the options based on the loan value
   filterLoanAmount(amount): Array<Option> {
     amount = Number(amount);
-    return this.availableOptions.filter(opt => {
-      return amount <= opt.maxAmount;
-    });
+    if (amount > 0) {
+      return this.availableOptions.filter(opt => {
+        return amount <= opt.maxAmount;
+      });
+    } else {
+      return [];
+    }
   }
 
   sort(opt, other): number {

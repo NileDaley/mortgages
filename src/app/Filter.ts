@@ -32,7 +32,9 @@ export class Filter {
   }
 
   // Filter the options based on deposit value
-  filterDeposit(deposit, loanAmount): Array<Option> {
+  filterDeposit(deposit: number, loanAmount: number): Array<Option> {
+    deposit = Number(deposit);
+    loanAmount = Number(loanAmount);
     if (loanAmount > deposit) {
       return this.availableOptions.filter(opt => {
         return opt.depositRequired <= deposit;

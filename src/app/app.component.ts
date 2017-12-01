@@ -169,7 +169,7 @@ export class AppComponent {
 
   // Calculate the total amount payable in currency format
   totalPayable(interest): string {
-    const calc = this.loan.amount * (1 + interest);
+    const calc = (this.loan.amount - this.loan.deposit) * (1 + interest);
     return this.currencyPipe.transform(calc, 'GBP' , true, '3.2-2');
   }
 
